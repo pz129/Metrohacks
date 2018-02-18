@@ -1,6 +1,7 @@
 package project;
 
-import static spark.Spark.*;
+import org.jtwig.parser.*;
+import static spark.Spark.before;
 
 import spark.Route;
 import spark.Spark;
@@ -14,12 +15,18 @@ public class Site {
 		log.info("setup complete");
 	}
 	protected void initWebsite() {
-		port(1234);
-		staticFileLocation("..");
+		Spark.port(1234);
+		Spark.staticFileLocation("..");
 		createRoutes();
 	}
 	protected void createRoutes() {
-		get("/", new HomeController());
-		post("/",new HomeController());
+		Spark.get("/", new HomeController(this));
+		Spark.get("/about-us", new AboutUsController());
+		Spark.get("/dataset", new DataSetController());
+		Spark.post("/",new HomeController(this));
+		downloadGet("adsf.txt");
+	}
+	protected void downloadGet(String filename) {
+		Spark.get("/download/"+filename, new DownloadController(filename));
 	}
 }
