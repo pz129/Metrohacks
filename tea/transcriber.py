@@ -15,29 +15,38 @@ from music21 import *
 # %matplotlib notebook
 plt.rcParams['figure.figsize'] = (12, 4)
 
+' System arguments are in the form $python transcriber.py "file_name_here.wav" '
+print "name: ", sys.argv[0]
+if len(sys.argv) == 2:
+	song_name = sys.argv[1]
+	print "song name:", song_name
+else:
+	print "Not correct number of arguments"
+	exit
 
-x = load_wav("thousandyears.wav")
-sr = 22050
-winsize = 2205
+
+' Load in the song name '
+x = load_wav(song_name) #load in the song
+sr = 22050 #sample rate
+winsize = 2205 #window size
 
 num_win = len(x)/winsize
 
-#peaks
 peaks = []
 # peaks = np.zeros(num_win)
 
 for win_idx in range(num_win):
 	start = win_idx * winsize
 	end = win_idx * winsize + winsize
-	print start, end
-	#set up, mult by hanning
+
+	' set up, multiply by hanning curve and zpad '
 	win = x[start:end]
 	x_w = zpad(win * np.hanning(len(win)), winsize*2)
 
-	#perform fft
+	' perform fft this will return contribution ' 
 	ft = np.fft.rfft(x_w)
 
-	#take abs and get rid of negatives
+	 ' take abs and get rid of negatives '
 	magft = np.abs(ft)
 
 	#get max peak
@@ -45,11 +54,8 @@ for win_idx in range(num_win):
 	# peak = np.argmax(magft)
 	# peaks[win_idx] = peak
 
-	#testing
-	pks = find_peaks(magft,0.8)
-	# pks = magft[np.where( magft > 10 )]
-	# print pks
-	# pks.shape
+	' find all peaks that are above certain threshold and return index(es) '
+	pks = find_peaks(magft, 0.8)
 	peaks.append(pks)
 	# peaks[win_idx] = pks
 	
@@ -61,15 +67,23 @@ strm = stream.Stream()
 for vals in peaks:
 	print vals
 	notes_in_chord = []
+	' convert the set of peaks to frequencies '
 	freqs = bin_to_freq(vals, sr, winsize) #peaks, sr, winsize
+
+	' convert frequencies to pitches'
 	pitches = freq_to_pitch(freqs)
+
 	for pitch in pitches:
+		'convert pitches to spn and add to chord '
 		print note.Note(pitch_to_spn(int(round(pitch))))
 		notes_in_chord.append(note.Note(pitch_to_spn(int(round(pitch)))))
+
+	' make chord and add it to strm '
 	chord_value = chord.Chord(notes_in_chord)
-	# print chord_value
+	print chord_value
 	strm.append(chord_value)
 
+' show/write strm'
 strm.show()
 # fp = strm.write("musicxml", "score.xml")
 
