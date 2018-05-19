@@ -17,6 +17,7 @@ import spark.Response;
 import spark.Route;
 public class HomeController implements Route{
 	Site site;
+	public static final String grouplocation="C:\\Users\\melon\\workspace\\Metrohacks\\boba\\src";
 	HomeController (Site site){
 		this.site=site;
 	}
@@ -46,21 +47,25 @@ public class HomeController implements Route{
 			System.out.println("Title: " + request.raw().getParameter("title"));
 			System.out.println("File: " + fName);
 			String[] t=fName.split("\\.");
-			String trimed=fName.substring(0, fName.length()-t[t.length-1].length());
+			String trimed=fName.substring(0, fName.length()-t[t.length-1].length()-1);
 			String tt=t[t.length-1];
 			if(tt.equals("wav")||tt.equals("mp3")) {
 				Part uploadedFile = request.raw().getPart("sound-file");
 				InputStream inputStream=uploadedFile.getInputStream();
 				byte[] buffer=new byte[inputStream.available()];
 				inputStream.read(buffer);
-				OutputStream outStream=new FileOutputStream(new File("src/sounds/"+fName));
+				OutputStream outStream=new FileOutputStream(new File("src\\sounds\\"+fName));
+				System.out.println(fName);
 				outStream.write(buffer);
 				//pythonRun()
 				Runtime rt=Runtime.getRuntime();
-				Process pr=rt.exec("");
+				System.out.println("C:\\Python27\\python "+grouplocation+"\\scripts\\transcriber.py "+grouplocation+"\\sounds\\"+fName+" "+grouplocation+"\\sheets\\"+trimed.substring(0,trimed.length()));
+				Process pr=rt.exec("C:\\Python27\\python.exe "+grouplocation+"\\scripts\\transcriber.py "+grouplocation+"\\sounds\\"+fName+" "+grouplocation+"\\sheets\\"+trimed.substring(0,trimed.length()));
+				Runtime rt2=Runtime.getRuntime();
+				Process pr2=rt2.exec("C:\\Program Files (x86)\\MuseScore 2\\bin\\MuseScore.exe "+grouplocation+"\\sheets\\"+trimed+".xml -o "+grouplocation+"\\sheets\\"+trimed+".pdf");
 				System.out.println(trimed);
 				//site.downloadGet(trimed+'.txt');
-				model.with("message", "Download the file <a href='/download/"+trimed+".txt'>here</a>");
+				model.with("message", "Download the file <a href='/sheets/"+trimed+".pdf'>here</a>");
 			}
 			else if(fName.trim().equals("")) {
 				model.with("message", "Please input a file.");

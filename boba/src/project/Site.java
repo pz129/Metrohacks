@@ -20,7 +20,7 @@ public class Site {
 		createRoutes();
 	}
 	protected void createRoutes() {
-		makeWebSocket();
+		//makeWebSocket();
 		Spark.get("/", new HomeController(this));
 		Spark.get("/about-us", new AboutUsController());
 		Spark.get("/dataset", new DataSetController());
