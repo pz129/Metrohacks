@@ -81,8 +81,8 @@ def pitch_to_spn(p):
     note = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
     mod = p % 12
     octive = p / 12 - 1
-    if octive < 0:
-        octive = 0
+    if octive > 6 or octive < 2:
+        return "-1"
     # print octive
     spn = note[mod] + str(octive)
     # print spn

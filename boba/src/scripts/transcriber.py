@@ -1,8 +1,8 @@
 import numpy as np
-import matplotlib.pyplot as plt
-import IPython.display as ipd
-from IPython.display import display
-from ipywidgets import interact
+# import matplotlib.pyplot as plt
+# import IPython.display as ipd
+# from IPython.display import display
+# from ipywidgets import interact
 
 import sys
 # sys.path.append("../common")
@@ -65,7 +65,8 @@ peaks = np.array(peaks)
 
 strm = stream.Stream()
 for vals in peaks:
-	print vals
+	# print vals
+	rest = False
 	notes_in_chord = []
 	' convert the set of peaks to frequencies '
 	freqs = bin_to_freq(vals, sr, winsize) #peaks, sr, winsize
@@ -74,14 +75,22 @@ for vals in peaks:
 	pitches = freq_to_pitch(freqs)
 
 	for pitch in pitches:
+		print pitch
 		'convert pitches to spn and add to chord '
-		print note.Note(pitch_to_spn(int(round(pitch))))
-		notes_in_chord.append(note.Note(pitch_to_spn(int(round(pitch)))))
+		# print note.Note(pitch_to_spn(int(round(pitch))))
+		note_to_add = pitch_to_spn(int(round(pitch)))
+		if note_to_add == "-1":
+			rest = True
+		else:
+			notes_in_chord.append(note.Note(note_to_add, quarterLength=1.5))
 
-	' make chord and add it to strm '
-	chord_value = chord.Chord(notes_in_chord)
-	print chord_value
-	strm.append(chord_value)
+	if rest == False:
+		' make chord and add it to strm '
+		chord_value = chord.Chord(notes_in_chord)
+		print chord_value
+		strm.append(chord_value)
+	else:
+		strm.append(note.Rest())
 
 ' show/write strm'
 # strm.show()
