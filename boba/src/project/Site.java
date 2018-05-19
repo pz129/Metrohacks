@@ -25,6 +25,7 @@ public class Site {
 		Spark.get("/about-us", new AboutUsController());
 		Spark.get("/dataset", new DataSetController());
 		Spark.post("/",new HomeController(this));
+		Spark.get("/connect", new ConnectController());
 		downloadGet("adsf.txt");
 	}
 	protected void makeWebSocket() {
