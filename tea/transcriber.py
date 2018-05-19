@@ -46,7 +46,7 @@ for win_idx in range(num_win):
 	' perform fft this will return contribution ' 
 	ft = np.fft.rfft(x_w)
 
-	 ' take abs and get rid of negatives '
+	' take abs and get rid of negatives '
 	magft = np.abs(ft)
 
 	#get max peak
@@ -84,8 +84,8 @@ for vals in peaks:
 	strm.append(chord_value)
 
 ' show/write strm'
-strm.show()
-# fp = strm.write("musicxml", "score.xml")
+# strm.show()
+fp = strm.write("musicxml", "score.xml")
 
 
 
