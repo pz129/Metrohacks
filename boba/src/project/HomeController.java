@@ -56,6 +56,8 @@ public class HomeController implements Route{
 				OutputStream outStream=new FileOutputStream(new File("src/sounds/"+fName));
 				outStream.write(buffer);
 				//pythonRun()
+				Runtime rt=Runtime.getRuntime();
+				Process pr=rt.exec("");
 				System.out.println(trimed);
 				//site.downloadGet(trimed+'.txt');
 				model.with("message", "Download the file <a href='/download/"+trimed+".txt'>here</a>");
