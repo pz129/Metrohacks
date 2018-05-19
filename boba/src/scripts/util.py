@@ -6,7 +6,7 @@ import sys
 import os
 import os.path
 
-import IPython.display as ipd
+# import IPython.display as ipd
 
 PI = np.pi
 

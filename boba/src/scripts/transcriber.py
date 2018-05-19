@@ -13,7 +13,7 @@ from music21 import *
 
 # %matplotlib inline
 # %matplotlib notebook
-plt.rcParams['figure.figsize'] = (12, 4)
+# plt.rcParams['figure.figsize'] = (12, 4)
 
 ' System arguments are in the form $python transcriber.py "file_name_here.wav" '
 print "name: ", sys.argv[0]
@@ -92,7 +92,7 @@ for vals in peaks:
 	else:
 		strm.append(note.Rest())
 
-' show/write strm'
+' show/write strm '
 # strm.show()
 fp = strm.write("musicxml", "../sheets/score.xml")
 
