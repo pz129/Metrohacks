@@ -17,8 +17,9 @@ from music21 import *
 
 ' System arguments are in the form $python transcriber.py "file_name_here.wav" '
 print "name: ", sys.argv[0]
-if len(sys.argv) == 2:
+if len(sys.argv) == 3:
 	song_name = sys.argv[1]
+	song_output_location = sys.argv[2]
 	print "song name:", song_name
 else:
 	print "Not correct number of arguments"
@@ -94,7 +95,7 @@ for vals in peaks:
 
 ' show/write strm '
 # strm.show()
-fp = strm.write("musicxml", "../sheets/score.xml")
+fp = strm.write("musicxml", song_output_location)
 
 
 
