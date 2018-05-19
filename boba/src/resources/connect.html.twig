@@ -1,0 +1,52 @@
+{% extends "base.html.twig" %}
+{% block body %}
+<form>
+<img id="sheet" src="/sheets/blank.png">
+<input type="button" id="btn" value="GO" />
+</form>
+    <script type="text/javascript">
+    	var img= {{ img }};
+        document.getElementById('btn').onclick = function() {
+            var val = document.getElementById('imagename').value,
+                src = "/sheets/" + img +'.png',
+                img = document.createElement('img');
+
+            img.src = src;
+            document.body.appendChild(img);
+        }
+
+        var ws = new WebSocket("localhost:8080/");
+        ws.onopen = function() {
+            alert("Opened!");
+            ws.send("Hello Server");
+        };
+
+        ws.onmessage = function (evt) {
+            alert("Message: " + evt.data);
+        };
+
+        ws.onclose = function() {
+            alert("Closed!");
+        };
+        ws.onerror = function(err) {
+            alert("Error: " + err);
+        };       
+        var context = new webkitAudioContext()
+        navigator.webkitGetUserMedia({audio:true}, gotStream)
+
+        function gotStream (stream)
+        {
+            var source = context.createMediaStreamSource(stream)
+            var proc = context.createScriptProcessor(2048, 2, 2)
+
+            source.connect(proc)
+            proc.connect(context.destination)
+            proc.onaudioprocess = function(event)
+            {
+                var audio_data = event.inputBuffer.getChannelData(0)|| new Float32Array(2048)
+                console.log(audio_data)
+                // send audio_data to server
+            }
+        }
+</script>
+{% endblock body %}
