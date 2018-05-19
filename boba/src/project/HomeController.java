@@ -1,8 +1,10 @@
 package project;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.Collection;
 
@@ -59,13 +61,24 @@ public class HomeController implements Route{
 				outStream.write(buffer);
 				//pythonRun()
 				Runtime rt=Runtime.getRuntime();
-				System.out.println("C:\\Python27\\python "+grouplocation+"\\scripts\\transcriber.py "+grouplocation+"\\sounds\\"+fName+" "+grouplocation+"\\sheets\\"+trimed.substring(0,trimed.length()));
-				Process pr=rt.exec("C:\\Python27\\python.exe "+grouplocation+"\\scripts\\transcriber.py "+grouplocation+"\\sounds\\"+fName+" "+grouplocation+"\\sheets\\"+trimed.substring(0,trimed.length()));
-				Runtime rt2=Runtime.getRuntime();
-				Process pr2=rt2.exec("C:\\Program Files (x86)\\MuseScore 2\\bin\\MuseScore.exe "+grouplocation+"\\sheets\\"+trimed+".xml -o "+grouplocation+"\\sheets\\"+trimed+".pdf");
+				System.out.println("C:\\Python27\\python.exe "+grouplocation+"\\scripts\\transcriber.py "+grouplocation+"\\sounds\\"+fName+" "+grouplocation+"\\sheets\\"+trimed+".xml");
+				Process pr=rt.exec("C:\\Python27\\python.exe "+grouplocation+"\\scripts\\transcriber.py "+grouplocation+"\\sounds\\"+fName+" "+grouplocation+"\\sheets\\"+trimed+".xml");
+				String line;
+				BufferedReader input =
+				        new BufferedReader
+				          (new InputStreamReader(pr.getInputStream()));
+				      while ((line = input.readLine()) != null) {
+				        System.out.println(line);
+				      }
+				      input.close();
+				//Runtime rt2=Runtime.getRuntime();
+				Process pr2=rt.exec("\"C:\\Program Files (x86)\\MuseScore 2\\bin\\MuseScore.exe\" "+grouplocation+"\\sheets\\"+trimed+".xml -o "+grouplocation+"\\resources\\sheets\\"+trimed+".pdf");
+				
+				System.out.println(pr.getOutputStream());
+				System.out.println("\"C:\\Program Files (x86)\\MuseScore 2\\bin\\MuseScore.exe\" "+grouplocation+"\\sheets\\"+trimed+".xml -o "+grouplocation+"\\resources\\sheets\\"+trimed+".pdf");
 				System.out.println(trimed);
 				//site.downloadGet(trimed+'.txt');
-				model.with("message", "Download the file <a href='/sheets/"+trimed+".pdf'>here</a>");
+				model.with("message", "Download the file <a href='"+trimed+".pdf'>here</a>");
 			}
 			else if(fName.trim().equals("")) {
 				model.with("message", "Please input a file.");
