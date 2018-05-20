@@ -40,6 +40,7 @@ winsize = sr/win_per_sec #window size
 num_win = len(x)/winsize
 
 sheet = np.zeros((100, num_win)) # (rows, columns) row is frequency, column is the win idex
+magftt = np.zeros((100, num_win))
 print sheet.shape
 # peaks = np.zeros(num_win)
 
@@ -63,6 +64,7 @@ for win_idx in range(num_win):
 		# print magft[contrib]
 		' value to change'
 		# sheet[contrib][win_idx] = 1
+		magftt[contrib][win_idx]=magft[contrib]
 		if magft[contrib] < min_bound:
 			# print "herea"
 			sheet[contrib][win_idx] = 0
@@ -111,25 +113,70 @@ for freq_line in sheet:
 # print win_per_sec
 
 # bpm = 120
-transcribe_sheet = np.zeros((100, num_win/4+10))
+transcribe_sheet = np.zeros((100, num_win/4))
+transcribe_magftt= np.zeros((100, num_win/4))
+result = np.zeros((num_win/4,2))
 ' there will be num_win number of 0s and 2s which is numsec * sr '
 ' add in groups of 4 to get sixteenth notes '
-for freq_line_idx in range(len(sheet)):
-	freq_line = sheet[freq_line_idx]
-	for i in range(len(freq_line)/4):
-		start = i*4
-		end = i*4+4
-		total = 0
-		for num in freq_line[start:end]:
-			if num == 2:
-				total += 1
-		if total != 0:
-			print "total", total
-		transcribe_sheet[freq_line_idx][i] = total
+for i in range(len(sheet)):
+        for j in range(100):
+                if transcribe_sheet[j][i]==2:
+                        transcribe_sheet[j][i/4]+=1
+                
+#for freq_line_idx in range(len(sheet)):
+#	freq_line = sheet[freq_line_idx]
+#	for i in range(len(freq_line)/4):
+#		start = i*4
+#		end = i*4+4
+#		total = 0
+#		for num in freq_line[start:end]:
+#			if num == 2:
+#				total += 1
+#		if total != 0:
+#			print "total", total
+#		transcribe_sheet[freq_line_idx][i] = total
 
 
+for i in range(len(transcribe_sheet)):
+        bestFreq=0
+        for j in range(100):
+                if magftt[j][i]>magftt[bestFreq][i]:
+                        bestFreq=j
+        print(bestFreq)
+        print("asdfadsf")
+        result[i][0]=bestFreq
+        result[i][1]=transcribe_sheet[bestFreq][i]
 
+strm = stream.Stream()
+lengthtot=0
+resultsStrings= np.zeros(len(result))
+for i in range(len(result)):
+        print(i)
+        print(result[i][0])
+        freq = bin_to_freq(result[i][0],sr,winsize)
+        print(freq)
+        pitches = freq_to_pitch(freq)
+        print(pitches)
+        note=pitch_to_spn(int(round(pitches)))
+        if(result[i][1]<2):
+                note="-1"
+        resultsStrings[i]=note
+                
+        
+for i in range(len(result)):
+        lengthtot+=1
+        if i!=0:
+                if resultsStrings[i]!=resultsStrings[i-1] or result[i][1]<=3:
+                        if resultsStrings[i-1]=='-1':
+                                strm.append(note.Rest(), quarterLength=0.25*lengthtot)
+                        else:
+                                strm.append(resultsStrings[i-1], quarterLength=0.25*lengthtot)
+                        lengthtot=0;
 
+if lengthtot > 0:
+        strm.append(resultsStrings[i-1],quarterLength=0.25*lengthtot)
+
+strm.show()
 # strm = stream.Stream()
 # for vals in peaks:
 # 	# print vals
