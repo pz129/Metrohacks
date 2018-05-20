@@ -30,8 +30,8 @@ x = load_wav(song_name) #load in the song
 song_sum = np.sum(x)
 avg = song_sum / len(x)
 print avg
-max_bound = avg * 1000000
-min_bound = avg * 500000
+max_bound = avg * 500000
+min_bound = avg * 300000
 print min_bound, max_bound
 sr = 22050 #sample rate
 win_per_sec = 32
@@ -146,10 +146,9 @@ print(magftt.shape)
 for i in range(len(transcribe_sheet[0])):
         bestFreq=0
         for j in range(100):
-                if transcribe_magftt[j][i]>transcribe_magftt[bestFreq][i]:
+                if transcribe_magftt[j][i]>transcribe_magftt[bestFreq][i]*0.999:
                         bestFreq=j
         print(bestFreq)
-        #print("asdfadsf")
         result[i][0]=bestFreq
         result[i][1]=transcribe_sheet[bestFreq][i]
 
@@ -181,7 +180,6 @@ for i in range(len(result)):
                         if resultsStrings[i-1]=="-1":
                                 strm.append(note.Rest( quarterLength=0.25*lengthtot))
                         else:
-                                print("asdf")
                                 strm.append(note.Note(resultsStrings[i-1], quarterLength=0.25*lengthtot))
                         lengthtot=0;
 
