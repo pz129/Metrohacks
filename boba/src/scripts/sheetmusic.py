@@ -17,17 +17,18 @@ from music21 import *
 
 ' System arguments are in the form $python transcriber.py "file_name_here.wav" '
 print "name: ", sys.argv[0]
-if len(sys.argv) == 3:
-	song_name = sys.argv[1]
+if len(sys.argv) == 4:
+	song_loc = sys.argv[1]
 	song_output_location = sys.argv[2]
-	print "song name:", song_name
+	song_name = sys.argv[3]
+	print "song name:", song_loc
 else:
 	print "Not correct number of arguments"
 	exit
 
 
 ' Load in the song name '
-x = load_wav(song_name) #load in the song
+x = load_wav(song_loc) #load in the song
 # plt.plot(x)
 song_sum = np.sum(x)
 avg = abs(song_sum) / len(x)
@@ -157,7 +158,7 @@ for i in range(len(transcribe_sheet[0])):
 
 strm = stream.Stream()
 strm.insert(0, metadata.Metadata())
-strm.metadata.title = song_name[:len(song_name)-4]
+strm.metadata.title = song_name
 strm.metadata.composer = ""
 lengthtot=0
 resultsStrings= []
@@ -191,8 +192,8 @@ for i in range(len(result)):
 if lengthtot > 0:
         strm.append(note.Note(resultsStrings[i-1],quarterLength=0.25*lengthtot))
 
-strm.show()
-# fp = strm.write("musicxml", song_output_location)
+# strm.show()
+fp = strm.write("musicxml", song_output_location)
 
 # strm = stream.Stream()
 # for vals in peaks:
