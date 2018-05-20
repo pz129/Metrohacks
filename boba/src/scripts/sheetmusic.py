@@ -156,6 +156,9 @@ for i in range(len(transcribe_sheet[0])):
         result[i][1]=transcribe_sheet[bestFreq][i]
 
 strm = stream.Stream()
+strm.insert(0, metadata.Metadata())
+strm.metadata.title = song_name[:len(song_name)-4]
+strm.metadata.composer = ""
 lengthtot=0
 resultsStrings= []
 # print(len(result))
@@ -188,8 +191,8 @@ for i in range(len(result)):
 if lengthtot > 0:
         strm.append(note.Note(resultsStrings[i-1],quarterLength=0.25*lengthtot))
 
-# strm.show()
-fp = strm.write("musicxml", song_output_location)
+strm.show()
+# fp = strm.write("musicxml", song_output_location)
 
 # strm = stream.Stream()
 # for vals in peaks:
