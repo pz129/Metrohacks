@@ -1,7 +1,11 @@
 from music21 import *
 s = stream.Stream()
 
-s.append(chord.Chord(["D", "F#", "A"]))
+
+notes_in_chord = []
+notes_in_chord.append(note.Note("C4", quarterLength = 0.25))
+# notes_in_chord.append(note.Note("D4", quarterLength = 1))
+s.append(chord.Chord(notes_in_chord))
 # s.append(note.Note('B-5'))
 # s.append(note.Note('B#'))
 
