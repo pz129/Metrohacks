@@ -1,8 +1,8 @@
 import numpy as np
-# import matplotlib.pyplot as plt
-# import IPython.display as ipd
-# from IPython.display import display
-# from ipywidgets import interact
+import matplotlib.pyplot as plt
+import IPython.display as ipd
+from IPython.display import display
+from ipywidgets import interact
 
 import sys
 # sys.path.append("../common")
@@ -13,12 +13,13 @@ from music21 import *
 
 # %matplotlib inline
 # %matplotlib notebook
-# plt.rcParams['figure.figsize'] = (12, 4)
+plt.rcParams['figure.figsize'] = (12, 4)
 
 ' System arguments are in the form $python transcriber.py "file_name_here.wav" '
 print "name: ", sys.argv[0]
-if len(sys.argv) == 2:
+if len(sys.argv) == 3:
 	song_name = sys.argv[1]
+	song_output_location = sys.argv[2]
 	print "song name:", song_name
 else:
 	print "Not correct number of arguments"
@@ -27,10 +28,11 @@ else:
 
 ' Load in the song name '
 x = load_wav(song_name) #load in the song
+# plt.plot(x)
 song_sum = np.sum(x)
-avg = song_sum / len(x)
+avg = abs(song_sum) / len(x)
 print avg
-max_bound = avg * 500000
+max_bound = avg * 800000
 min_bound = avg * 300000
 print min_bound, max_bound
 sr = 22050 #sample rate
@@ -69,13 +71,13 @@ for win_idx in range(num_win):
 			# print "herea"
 			sheet[contrib][win_idx] = 0
 		elif magft[contrib] > max_bound:
-			# print "hereb"
+			# print "maxboudn", max_bound
 			sheet[contrib][win_idx] = 2
 		else:
 			# print "herec"
 			sheet[contrib][win_idx] = 1
 
-print sheet
+# print sheet
 # sheet = [[2, 1, 2]]
 # ' 0 0 2 2 2 2 0 0 0 2 '
 # sheet = np.array(sheet)
@@ -107,7 +109,7 @@ for freq_line in sheet:
 				freq_line[prev_idx:idx] = 0
 			prev_idx = idx
 			prev_is_two = False
-	print freq_line
+	# print freq_line
 
 # print sheet
 # print win_per_sec
@@ -116,9 +118,9 @@ for freq_line in sheet:
 transcribe_sheet = np.zeros((100, num_win/4))
 transcribe_magftt= np.zeros((100, num_win/4))
 result = np.zeros((num_win/4,2))
-print(transcribe_magftt)
-print(magftt)
-print(num_win)
+# print(transcribe_magftt)
+# print(magftt)
+# print(num_win)
 ' there will be num_win number of 0s and 2s which is numsec * sr '
 ' add in groups of 4 to get sixteenth notes '
 for i in range(len(sheet[0])):
@@ -142,22 +144,23 @@ for i in range(len(sheet[0])):
 np.set_printoptions(threshold='nan')
 #print(transcribe_magftt)
 #print(magftt)
-print(magftt.shape)
+# print(magftt.shape)
 for i in range(len(transcribe_sheet[0])):
         bestFreq=0
         for j in range(100):
-                if transcribe_magftt[j][i]>transcribe_magftt[bestFreq][i]*0.999:
+                if transcribe_magftt[j][i]>transcribe_magftt[bestFreq][i]:
                         bestFreq=j
-        print(bestFreq)
+        # print(bestFreq)
+        #print("asdfadsf")
         result[i][0]=bestFreq
         result[i][1]=transcribe_sheet[bestFreq][i]
 
 strm = stream.Stream()
 lengthtot=0
 resultsStrings= []
-print(len(result))
+# print(len(result))
 for i in range(len(result)):
-        print(i)
+        # print(i)
         #print(result[i][0])
         if(result[i][0]==0):
                 result[i][0]+=1
@@ -166,11 +169,10 @@ for i in range(len(result)):
         pitches = freq_to_pitch(freq)
         #print(pitches)
         note2=pitch_to_spn(int(round(pitches)))
-        print(result[i][1])
+        # print(result[i][1])
         if(result[i][1]<2):
                 note2="-1"
-        print(note2)
-        print("asdf")
+        # print(note2)
         resultsStrings.append(note2)
                 
 for i in range(len(result)):
@@ -186,7 +188,9 @@ for i in range(len(result)):
 if lengthtot > 0:
         strm.append(note.Note(resultsStrings[i-1],quarterLength=0.25*lengthtot))
 
-strm.show()
+# strm.show()
+fp = strm.write("musicxml", song_output_location)
+
 # strm = stream.Stream()
 # for vals in peaks:
 # 	# print vals
