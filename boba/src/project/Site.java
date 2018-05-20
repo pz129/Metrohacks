@@ -16,11 +16,11 @@ public class Site {
 	}
 	protected void initWebsite() {
 		Spark.port(1234);
-		Spark.staticFileLocation("..");
+		Spark.externalStaticFileLocation("C:/Users/melon/workspace/Metrohacks/boba/src/resources/sheets");
 		createRoutes();
 	}
 	protected void createRoutes() {
-		makeWebSocket();
+		//makeWebSocket();
 		Spark.get("/", new HomeController(this));
 		Spark.get("/about-us", new AboutUsController());
 		Spark.get("/dataset", new DataSetController());
