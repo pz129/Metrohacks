@@ -34,7 +34,7 @@ max_bound = avg * 1000000
 min_bound = avg * 500000
 print min_bound, max_bound
 sr = 22050 #sample rate
-win_per_sec = 128
+win_per_sec = 32
 winsize = sr/win_per_sec #window size
 
 num_win = len(x)/winsize
@@ -116,13 +116,17 @@ for freq_line in sheet:
 transcribe_sheet = np.zeros((100, num_win/4))
 transcribe_magftt= np.zeros((100, num_win/4))
 result = np.zeros((num_win/4,2))
+print(transcribe_magftt)
+print(magftt)
+print(num_win)
 ' there will be num_win number of 0s and 2s which is numsec * sr '
 ' add in groups of 4 to get sixteenth notes '
-for i in range(len(sheet)):
+for i in range(len(sheet[0])):
         for j in range(100):
-                if transcribe_sheet[j][i]==2:
+                if sheet[j][i]==2:
                         transcribe_sheet[j][i/4]+=1
-                
+                transcribe_magftt[j][i/4]+=magftt[j][i]
+
 #for freq_line_idx in range(len(sheet)):
 #	freq_line = sheet[freq_line_idx]
 #	for i in range(len(freq_line)/4):
@@ -135,46 +139,54 @@ for i in range(len(sheet)):
 #		if total != 0:
 #			print "total", total
 #		transcribe_sheet[freq_line_idx][i] = total
-
-
-for i in range(len(transcribe_sheet)):
+np.set_printoptions(threshold='nan')
+#print(transcribe_magftt)
+#print(magftt)
+print(magftt.shape)
+for i in range(len(transcribe_sheet[0])):
         bestFreq=0
         for j in range(100):
-                if magftt[j][i]>magftt[bestFreq][i]:
+                if transcribe_magftt[j][i]>transcribe_magftt[bestFreq][i]:
                         bestFreq=j
         print(bestFreq)
-        print("asdfadsf")
+        #print("asdfadsf")
         result[i][0]=bestFreq
         result[i][1]=transcribe_sheet[bestFreq][i]
 
 strm = stream.Stream()
 lengthtot=0
-resultsStrings= np.zeros(len(result))
+resultsStrings= []
+print(len(result))
 for i in range(len(result)):
         print(i)
-        print(result[i][0])
+        #print(result[i][0])
+        if(result[i][0]==0):
+                result[i][0]+=1
         freq = bin_to_freq(result[i][0],sr,winsize)
-        print(freq)
+        #print(freq)
         pitches = freq_to_pitch(freq)
-        print(pitches)
-        note=pitch_to_spn(int(round(pitches)))
+        #print(pitches)
+        note2=pitch_to_spn(int(round(pitches)))
+        print(result[i][1])
         if(result[i][1]<2):
-                note="-1"
-        resultsStrings[i]=note
+                note2="-1"
+        print(note2)
+        print("asdf")
+        resultsStrings.append(note2)
                 
-        
 for i in range(len(result)):
         lengthtot+=1
         if i!=0:
                 if resultsStrings[i]!=resultsStrings[i-1] or result[i][1]<=3:
-                        if resultsStrings[i-1]=='-1':
-                                strm.append(note.Rest(), quarterLength=0.25*lengthtot)
+                        if resultsStrings[i-1]=="-1":
+                                strm.append(note.Rest( quarterLength=0.25*lengthtot))
                         else:
-                                strm.append(resultsStrings[i-1], quarterLength=0.25*lengthtot)
+                                print("asdf")
+                                strm.append(note.Note(resultsStrings[i-1], quarterLength=0.25*lengthtot))
                         lengthtot=0;
 
 if lengthtot > 0:
-        strm.append(resultsStrings[i-1],quarterLength=0.25*lengthtot)
+        strm.append(note.Note(resultsStrings[i-1],quarterLength=0.25*lengthtot))
 
 strm.show()
 # strm = stream.Stream()
