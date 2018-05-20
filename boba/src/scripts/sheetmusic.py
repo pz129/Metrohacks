@@ -1,8 +1,8 @@
 import numpy as np
-import matplotlib.pyplot as plt
-import IPython.display as ipd
-from IPython.display import display
-from ipywidgets import interact
+# import matplotlib.pyplot as plt
+# import IPython.display as ipd
+# from IPython.display import display
+# from ipywidgets import interact
 
 import sys
 # sys.path.append("../common")
@@ -13,7 +13,7 @@ from music21 import *
 
 # %matplotlib inline
 # %matplotlib notebook
-plt.rcParams['figure.figsize'] = (12, 4)
+# plt.rcParams['figure.figsize'] = (12, 4)
 
 ' System arguments are in the form $python transcriber.py "file_name_here.wav" '
 print "name: ", sys.argv[0]
